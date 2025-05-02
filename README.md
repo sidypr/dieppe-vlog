@@ -1,5 +1,8 @@
 # Dieppe Vlog
 
+[![CI/CD](https://github.com/votre-username/dieppe-vlog/actions/workflows/main.yml/badge.svg)](https://github.com/votre-username/dieppe-vlog/actions)
+[![Deploy to Render](https://img.shields.io/badge/deploy%20to-render-purple)](https://render.com)
+
 Une plateforme de streaming vidéo développée avec Symfony 6.
 
 ## Fonctionnalités
@@ -33,7 +36,25 @@ symfony serve
 
 ## Déploiement
 
-Le projet est configuré pour être déployé sur Render.com.
+Le projet est configuré pour être déployé automatiquement sur Render.com à chaque push sur la branche main.
+
+## Développement
+
+1. Créez une nouvelle branche pour votre fonctionnalité
+```bash
+git checkout -b feature/ma-fonctionnalite
+```
+
+2. Committez vos changements
+```bash
+git add .
+git commit -m "feat: ajout de ma fonctionnalité"
+```
+
+3. Poussez et créez une Pull Request
+```bash
+git push origin feature/ma-fonctionnalite
+```
 
 ## Licence
 
