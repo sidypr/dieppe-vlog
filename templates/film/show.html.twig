@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ film.title }} - Dieppe Vlog{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            {# Lecteur vidéo #}
+            {% if film.videoUrl %}
+                <div class="ratio ratio-16x9 mb-4">
+                    <iframe src="{{ film.videoUrl }}" 
+                            allowfullscreen 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            class="rounded shadow">
+                    </iframe>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> Aucune vidéo n'est disponible pour ce film.
+                </div>
+            {% endif %}
+
+            {# Titre et actions #}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h2">{{ film.title }}</h1>
+                <div class="d-flex gap-2">
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('film_like', {'id': film.id}) }}" 
+                           class="btn {% if app.user in film.likedBy %}btn-danger{% else %}btn-outline-danger{% endif %}">
+                            <i class="{% if app.user in film.likedBy %}fas{% else %}far{% endif %} fa-heart"></i>
+                            <span class="ms-1">{{ film.likedBy|length }}</span>
+                        </a>
+                    {% endif %}
+                    <a href="{{ path('films') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </a>
+                </div>
+            </div>
+
+            {# Description #}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h5 mb-0">Description</h3>
+                </div>
+                <div class="card-body">
+                    {{ film.description|nl2br }}
+                </div>
+            </div>
+
+            {# Section commentaires #}
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="h5 mb-0">Commentaires</h3>
+                    <span class="badge bg-primary">{{ film.comments|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% if is_granted('ROLE_USER') and commentForm %}
+                        <div class="mb-4">
+                            {{ form_start(commentForm) }}
+                                {{ form_widget(commentForm) }}
+                                <button type="submit" class="btn btn-primary mt-2">
+                                    <i class="fas fa-paper-plane"></i> Commenter
+                                </button>
+                            {{ form_end(commentForm) }}
+                        </div>
+                        <hr>
+                    {% elseif not is_granted('ROLE_USER') %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            <a href="{{ path('app_login') }}">Connectez-vous</a> pour laisser un commentaire.
+                        </div>
+                    {% endif %}
+
+                    <div class="comments-list">
+                        {% for comment in film.comments|sort((a, b) => b.createdAt <=> a.createdAt) %}
+                            <div class="card mb-3 border-0 bg-light">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <i class="fas fa-user-circle"></i>
+                                            <span class="fw-bold">{{ comment.user.email }}</span>
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="far fa-clock"></i> 
+                                            {{ comment.createdAt|date('d/m/Y H:i') }}
+                                        </small>
+                                    </div>
+                                    <p class="card-text mb-0">{{ comment.content|nl2br }}</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-center text-muted">
+                                <i class="far fa-comments fa-2x mb-2"></i><br>
+                                Aucun commentaire pour le moment.<br>
+                                {% if is_granted('ROLE_USER') %}
+                                    Soyez le premier à commenter !
+                                {% endif %}
+                            </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Sidebar #}
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="h5 mb-0">Informations</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="far fa-calendar-alt"></i>
+                            Ajouté le {{ film.createdAt|date('d/m/Y') }}
+                        </li>
+                        <li class="mb-2">
+                            <i class="far fa-heart"></i>
+                            {{ film.likedBy|length }} j'aime
+                        </li>
+                        <li>
+                            <i class="far fa-comments"></i>
+                            {{ film.comments|length }} commentaires
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Administration</h4>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ path('admin_edit_film', {'id': film.id}) }}" class="btn btn-warning w-100 mb-2">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <form action="{{ path('admin_delete_film', {'id': film.id}) }}" method="post" 
+                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce film ?');">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash-alt"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

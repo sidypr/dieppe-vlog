@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}DieppeVlog - Accueil{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Les derniers films</h1>
+
+    <div class="row">
+        {% for film in films %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ film.title }}</h5>
+                    <p class="card-text">{{ film.description|slice(0, 150) }}...</p>
+                    <p class="card-text">
+                        <small class="text-muted">Ajouté le {{ film.createdAt|date('d/m/Y') }}</small>
+                    </p>
+                    <a href="{{ path('film_show', {id: film.id}) }}" class="btn btn-primary">Voir plus</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Aucun film n'est disponible pour le moment.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

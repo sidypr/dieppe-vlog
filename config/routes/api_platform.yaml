@@ -1,0 +1,24 @@
+api_platform:
+    resource: .
+    type: api_platform
+    prefix: /api
+
+api_platform_docs:
+    path: /api/docs
+    controller: api_platform.swagger_ui.action
+    methods: ['GET']
+
+api_platform_graphql:
+    path: /api/graphql
+    controller: api_platform.graphql.action
+    methods: ['GET', 'POST']
+
+api_platform_jsonld:
+    path: /api/contexts/{shortName}
+    controller: api_platform.jsonld.context_action
+    methods: ['GET']
+
+api_platform_openapi:
+    path: /api/docs.json
+    controller: api_platform.openapi.action
+    methods: ['GET']

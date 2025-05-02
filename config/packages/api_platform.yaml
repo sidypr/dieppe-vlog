@@ -1,0 +1,35 @@
+api_platform:
+    title: 'DieppeVlog API'
+    description: 'API pour la gestion de films privés'
+    version: '1.0.0'
+    show_webby: false
+    enable_docs: true
+    enable_entrypoint: true
+    enable_swagger: true
+    enable_swagger_ui: true
+    enable_re_doc: true
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+    patch_formats:
+        json: ['application/merge-patch+json']
+    swagger:
+        versions: [3]
+    formats:
+        jsonld: ['application/ld+json']
+        json: ['application/json']
+        html: ['text/html']
+    docs_formats:
+        jsonld: ['application/ld+json']
+        jsonopenapi: ['application/vnd.openapi+json']
+        html: ['text/html']
+    defaults:
+        stateless: false
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']
+        pagination_enabled: true
+        pagination_items_per_page: 10
+        pagination_client_enabled: true
+        pagination_client_items_per_page: true
+        extra_properties:
+            standard_put: true
+            rfc_7807_compliant_errors: true 

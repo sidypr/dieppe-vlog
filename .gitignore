@@ -1,0 +1,36 @@
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+# Cache and logs
+/var/
+/vendor/
+.env.local
+.env.*.local
+
+# Uploaded files
+/public/uploads/
+
+# PHPUnit
+/phpunit.xml
+.phpunit.result.cache
+
+# PHP CS Fixer
+/.php-cs-fixer.php
+/.php-cs-fixer.cache
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
