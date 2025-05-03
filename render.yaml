@@ -1,12 +1,9 @@
 services:
   - type: web
     name: dieppe-vlog
-    env: docker
-    dockerfilePath: ./Dockerfile
-    buildCommand: |
-      curl -sS https://getcomposer.org/installer | php
-      php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
-    startCommand: docker-compose up
+    env: php
+    buildCommand: composer install --no-dev --optimize-autoloader
+    startCommand: php -S 0.0.0.0:$PORT -t public/
     envVars:
       - key: APP_ENV
         value: prod
@@ -16,14 +13,11 @@ services:
         fromDatabase:
           name: dieppe-vlog-db
           property: connectionString
-    disk:
-      name: uploads
-      mountPath: /var/www/html/public/uploads
-      sizeGB: 1
 
 databases:
   - name: dieppe-vlog-db
     plan: free
+    ipAllowList: []
 
 disks:
   - name: uploads
