@@ -1,0 +1,36 @@
+name: app
+
+type: php:8.2
+
+build:
+    flavor: none
+
+dependencies:
+    php:
+        composer/composer: "^2"
+
+relationships:
+    database: "db:postgresql"
+
+web:
+    locations:
+        "/":
+            root: "public"
+            expires: 1h
+            passthru: "/index.php"
+
+disk: 512
+
+mounts:
+    "/var": { source: local, source_path: var }
+    "/public/uploads": { source: local, source_path: uploads }
+
+hooks:
+    build: |
+        set -e
+        composer install --no-dev --optimize-autoloader
+        php bin/console cache:clear
+        php bin/console assets:install --no-debug
+    deploy: |
+        set -e
+        php bin/console doctrine:migrations:migrate --no-interaction 
