@@ -2,6 +2,15 @@ name: app
 
 type: php:8.2
 
+runtime:
+    extensions:
+        - apcu
+        - mbstring
+        - pdo_pgsql
+        - iconv
+        - ctype
+        - opcache
+
 build:
     flavor: none
 
@@ -18,8 +27,22 @@ web:
             root: "public"
             expires: 1h
             passthru: "/index.php"
+            allow: true
+            rules:
+                \.(css|js|gif|jpe?g|png|ttf|eot|woff2?|otf|ico|svg?)$:
+                    allow: true
+                ^/uploads/:
+                    allow: true
+                    expires: 1h
+                    scripts: false
 
-disk: 512
+variables:
+    php:
+        memory_limit: 256M
+        upload_max_filesize: 64M
+        post_max_size: 64M
+
+disk: 2048
 
 mounts:
     "/var": { source: local, source_path: var }
@@ -33,4 +56,6 @@ hooks:
         php bin/console assets:install --no-debug
     deploy: |
         set -e
-        php bin/console doctrine:migrations:migrate --no-interaction 
+        mkdir -p public/uploads
+        php bin/console doctrine:migrations:migrate --no-interaction
+        php bin/console cache:clear 
