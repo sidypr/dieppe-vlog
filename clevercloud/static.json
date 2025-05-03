@@ -1,0 +1,14 @@
+{
+    "/public/uploads": {
+        "directory": "/public/uploads",
+        "expires": "1d"
+    },
+    "/public/build": {
+        "directory": "/public/build",
+        "expires": "30d"
+    },
+    "/public/bundles": {
+        "directory": "/public/bundles",
+        "expires": "30d"
+    }
+} 

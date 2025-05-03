@@ -1,9 +1,25 @@
 {
     "deploy": {
         "webroot": "/public",
-        "composer_install": true
+        "composer_install": true,
+        "composer_options": ["--prefer-dist", "--no-dev", "--optimize-autoloader"]
     },
     "hooks": {
-        "postDeploy": "php bin/console doctrine:migrations:migrate --no-interaction"
+        "postDeploy": [
+            "php bin/console cache:clear",
+            "php bin/console doctrine:migrations:migrate --no-interaction"
+        ]
+    },
+    "configuration": {
+        "opcache.enable": 1,
+        "opcache.memory_consumption": 256,
+        "opcache.max_accelerated_files": 20000,
+        "opcache.validate_timestamps": 0,
+        "realpath_cache_size": "4096K",
+        "realpath_cache_ttl": 600,
+        "memory_limit": "512M",
+        "max_execution_time": 300,
+        "upload_max_filesize": "64M",
+        "post_max_size": "64M"
     }
 } 
