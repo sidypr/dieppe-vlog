@@ -3,7 +3,10 @@ services:
     name: dieppe-vlog
     env: docker
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /
+    buildCommand: |
+      curl -sS https://getcomposer.org/installer | php
+      php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+    startCommand: docker-compose up
     envVars:
       - key: APP_ENV
         value: prod

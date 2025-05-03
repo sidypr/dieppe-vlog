@@ -1,12 +1,12 @@
 # Étape de build
-FROM composer:2 as builder
+FROM composer:2 AS composer
 
 WORKDIR /app
 COPY composer.* ./
-RUN composer install --no-dev --no-scripts --no-autoloader
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
 COPY . .
-RUN composer dump-autoload --optimize --no-dev
+RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
 
 # Image finale
 FROM php:8.2-fpm-alpine
@@ -15,19 +15,20 @@ FROM php:8.2-fpm-alpine
 RUN apk add --no-cache \
     postgresql-dev \
     nginx \
-    supervisor
+    supervisor \
+    && docker-php-ext-install pdo_pgsql
 
-# Installation des extensions PHP
-RUN docker-php-ext-install pdo_pgsql
+# Configuration de PHP
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Configuration de Nginx
 COPY nginx.conf /etc/nginx/http.d/default.conf
 
 # Configuration de Supervisor
-COPY --from=builder /app/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Copie des fichiers de l'application
-COPY --from=builder /app /var/www/html
+COPY --from=composer /app /var/www/html
 RUN chown -R www-data:www-data /var/www/html/var
 
 # Script de démarrage
