@@ -1,0 +1,15 @@
+# Revue globale par défaut
+* @sidypr
+
+# Configuration
+/.github/* @sidypr
+/config/* @sidypr
+
+# Code source
+/src/* @sidypr
+
+# Templates
+/templates/* @sidypr
+
+# Tests
+/tests/* @sidypr 
