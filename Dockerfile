@@ -1,32 +1,39 @@
+# Étape de build
+FROM composer:2 as builder
+
+WORKDIR /app
+COPY composer.* ./
+RUN composer install --no-dev --no-scripts --no-autoloader
+
+COPY . .
+RUN composer dump-autoload --optimize --no-dev
+
+# Image finale
 FROM php:8.2-fpm-alpine
 
 # Installation des dépendances système
 RUN apk add --no-cache \
     postgresql-dev \
-    git \
-    zip \
-    unzip
+    nginx \
+    supervisor
 
 # Installation des extensions PHP
 RUN docker-php-ext-install pdo_pgsql
 
-# Installation de Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Configuration de Nginx
+COPY nginx.conf /etc/nginx/http.d/default.conf
 
-# Configuration du répertoire de travail
-WORKDIR /var/www/html
+# Configuration de Supervisor
+COPY --from=builder /app/docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copie des fichiers du projet
-COPY . .
+# Copie des fichiers de l'application
+COPY --from=builder /app /var/www/html
+RUN chown -R www-data:www-data /var/www/html/var
 
-# Installation des dépendances
-RUN composer install --no-dev --optimize-autoloader
+# Script de démarrage
+COPY docker/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
-# Configuration des permissions
-RUN chown -R www-data:www-data var
+EXPOSE 80
 
-# Exposition du port
-EXPOSE 9000
-
-# Démarrage de PHP-FPM
-CMD ["php-fpm"] 
+CMD ["/usr/local/bin/start.sh"] 
