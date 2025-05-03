@@ -3,6 +3,7 @@ services:
     name: dieppe-vlog
     env: docker
     dockerfilePath: Dockerfile
+    healthCheckPath: /
     envVars:
       - key: APP_ENV
         value: prod
@@ -12,7 +13,16 @@ services:
         fromDatabase:
           name: dieppe-vlog-db
           property: connectionString
+    disk:
+      name: uploads
+      mountPath: /var/www/html/public/uploads
+      sizeGB: 1
 
 databases:
   - name: dieppe-vlog-db
-    plan: free 
+    plan: free
+
+disks:
+  - name: uploads
+    mountPath: /var/www/html/public/uploads
+    sizeGB: 1 
