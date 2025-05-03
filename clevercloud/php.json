@@ -1,0 +1,9 @@
+{
+    "deploy": {
+        "webroot": "/public",
+        "composer_install": true
+    },
+    "hooks": {
+        "postDeploy": "php bin/console doctrine:migrations:migrate --no-interaction"
+    }
+} 
