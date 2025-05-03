@@ -1,0 +1,9 @@
+{
+    "build": {
+        "type": "php",
+        "version": "8.2"
+    },
+    "deploy": {
+        "module": "php-apache2"
+    }
+} 
